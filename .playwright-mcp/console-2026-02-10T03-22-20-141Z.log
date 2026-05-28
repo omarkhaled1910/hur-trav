@@ -1,0 +1,27 @@
+[  925854ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/api/authors?depth=0&fallback-locale=null:0
+[  992566ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/admin/collections/authors/create:0
+[  992566ms] [ERROR] TypeError: Failed to fetch
+    at S (http://localhost:3000/_next/static/chunks/3310-1cba20eb207c2f12.js:1:107911) @ http://localhost:3000/_next/static/chunks/a1526249-95477de2fae27c79.js:0
+[  992882ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/admin/collections/authors/create:0
+[  992882ms] [ERROR] TypeError: Failed to fetch
+    at S (http://localhost:3000/_next/static/chunks/3310-1cba20eb207c2f12.js:1:107911) @ http://localhost:3000/_next/static/chunks/a1526249-95477de2fae27c79.js:0
+[  997652ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/admin/collections/authors/create:0
+[  997652ms] [ERROR] TypeError: Failed to fetch
+    at S (http://localhost:3000/_next/static/chunks/3310-1cba20eb207c2f12.js:1:107911) @ http://localhost:3000/_next/static/chunks/a1526249-95477de2fae27c79.js:0
+[ 1023325ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/admin/collections/authors/create:0
+[ 1023325ms] [ERROR] TypeError: Failed to fetch
+    at S (http://localhost:3000/_next/static/chunks/3310-1cba20eb207c2f12.js:1:107911) @ http://localhost:3000/_next/static/chunks/a1526249-95477de2fae27c79.js:0
+[ 1026873ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/admin/collections/authors/create:0
+[ 1026873ms] [ERROR] TypeError: Failed to fetch
+    at S (http://localhost:3000/_next/static/chunks/3310-1cba20eb207c2f12.js:1:107911) @ http://localhost:3000/_next/static/chunks/a1526249-95477de2fae27c79.js:0
+[ 1035995ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/admin/collections/authors/create:0
+[ 1035995ms] [ERROR] TypeError: Failed to fetch
+    at S (http://localhost:3000/_next/static/chunks/3310-1cba20eb207c2f12.js:1:107911) @ http://localhost:3000/_next/static/chunks/a1526249-95477de2fae27c79.js:0
+[ 1038137ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/api/authors?depth=0&fallback-locale=null:0
+[ 1038137ms] [ERROR] Error submitting form TypeError: Failed to fetch
+    at Object.post (http://localhost:3000/_next/static/chunks/a1526249-95477de2fae27c79.js:1:127106)
+    at http://localhost:3000/_next/static/chunks/a1526249-95477de2fae27c79.js:1:386765 @ http://localhost:3000/_next/static/chunks/a1526249-95477de2fae27c79.js:0
+[ 7131825ms] [WARNING] The resource http://localhost:3000/_next/static/css/app/(payload)/admin/%5B%5B...segments%5D%5D/page.css?v=1770698627505 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3000/admin/collections/articles?limit=10:0
+[ 7131825ms] [WARNING] The resource http://localhost:3000/_next/static/css/app/(payload)/layout.css?v=1770698627505 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3000/admin/collections/articles?limit=10:0
+[ 7191318ms] [WARNING] The resource http://localhost:3000/_next/static/css/app/(payload)/admin/%5B%5B...segments%5D%5D/page.css?v=1770698627505 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3000/admin/collections/articles?limit=10:0
+[ 7191318ms] [WARNING] The resource http://localhost:3000/_next/static/css/app/(payload)/layout.css?v=1770698627505 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3000/admin/collections/articles?limit=10:0

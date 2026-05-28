@@ -1,0 +1,67 @@
+import type { Metadata } from 'next'
+
+import { cn } from '@/utilities/ui'
+import React from 'react'
+
+import { AdminBar } from '@/components/AdminBar'
+import { Footer } from '@/Footer/Component'
+import { Header } from '@/Header/Component'
+import { Providers } from '@/providers'
+import { InitTheme } from '@/providers/Theme/InitTheme'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { draftMode } from 'next/headers'
+import { I18nProvider } from '@/i18n/client'
+import { getServerI18n } from '@/i18n/server'
+
+import './globals.css'
+import { getServerSideURL } from '@/utilities/getURL'
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const { isEnabled } = await draftMode()
+  const { locale, dir } = await getServerI18n()
+
+  return (
+    <html lang={locale} dir={dir} suppressHydrationWarning>
+      <head>
+        <InitTheme />
+        <link href="/favicon.ico" rel="icon" sizes="32x32" />
+        <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className={cn('font-cairo antialiased')}>
+        <I18nProvider initialLocale={locale}>
+          <Providers>
+            <AdminBar
+              adminBarProps={{
+                preview: isEnabled,
+              }}
+            />
+
+            <Header />
+            {children}
+            <Footer />
+          </Providers>
+        </I18nProvider>
+      </body>
+    </html>
+  )
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerI18n()
+
+  return {
+    metadataBase: new URL(getServerSideURL()),
+    title: t('meta.homeTitle'),
+    description: t('meta.homeDescription'),
+    openGraph: mergeOpenGraph(),
+    twitter: {
+      card: 'summary_large_image',
+    },
+  }
+}
