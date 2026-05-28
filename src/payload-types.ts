@@ -67,13 +67,11 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    doctors: Doctor;
     pages: Page;
     posts: Post;
-    articles: Article;
-    authors: Author;
     media: Media;
     categories: Category;
-    videos: Video;
     users: User;
     redirects: Redirect;
     forms: Form;
@@ -92,13 +90,11 @@ export interface Config {
     };
   };
   collectionsSelect: {
+    doctors: DoctorsSelect<false> | DoctorsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
-    articles: ArticlesSelect<false> | ArticlesSelect<true>;
-    authors: AuthorsSelect<false> | AuthorsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
-    videos: VideosSelect<false> | VideosSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -153,6 +149,243 @@ export interface UserAuthOperations {
     email: string;
     password: string;
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "doctors".
+ */
+export interface Doctor {
+  id: string;
+  fullName: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * e.g. Consultant Plastic Surgeon
+   */
+  professionalTitle?: string | null;
+  specialty: string;
+  /**
+   * Display European certification badge on profile
+   */
+  certifiedEurope?: boolean | null;
+  featured?: boolean | null;
+  published?: boolean | null;
+  profileImage: string | Media;
+  /**
+   * Shown on cards and listing pages
+   */
+  shortBio?: string | null;
+  biography?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  languages?:
+    | {
+        language: string;
+        id?: string | null;
+      }[]
+    | null;
+  yearsOfExperience?: number | null;
+  careerHistory?:
+    | {
+        role: string;
+        institution: string;
+        location?: string | null;
+        startYear?: number | null;
+        /**
+         * Leave empty if current role
+         */
+        endYear?: number | null;
+        isCurrent?: boolean | null;
+        summary?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Board certifications, fellowships, and European credentials
+   */
+  europeanCertifications?:
+    | {
+        name: string;
+        issuingBody: string;
+        country?: string | null;
+        yearObtained?: number | null;
+        credentialId?: string | null;
+        certificateDocument?: (string | null) | Media;
+        supportingGallery?:
+          | {
+              image: string | Media;
+              caption?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Facility, consultation rooms, and clinic environment
+   */
+  clinicGallery?:
+    | {
+        image: string | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Post-procedure and clinical imagery (ensure patient consent in admin workflow)
+   */
+  procedureGallery?:
+    | {
+        image: string | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+    description?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: string;
+  usage?: ('profile' | 'clinic' | 'procedure' | 'certificate' | 'general') | null;
+  alt?: string | null;
+  caption?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  folder?: (string | null) | FolderInterface;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    square?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    small?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    medium?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    large?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    xlarge?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-folders".
+ */
+export interface FolderInterface {
+  id: string;
+  name: string;
+  folder?: (string | null) | FolderInterface;
+  documentsAndFolders?: {
+    docs?: (
+      | {
+          relationTo?: 'payload-folders';
+          value: string | FolderInterface;
+        }
+      | {
+          relationTo?: 'media';
+          value: string | Media;
+        }
+    )[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  folderType?: 'media'[] | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -272,125 +505,6 @@ export interface Post {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: string;
-  alt?: string | null;
-  caption?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  folder?: (string | null) | FolderInterface;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    square?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    small?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    medium?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    large?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    xlarge?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    og?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-folders".
- */
-export interface FolderInterface {
-  id: string;
-  name: string;
-  folder?: (string | null) | FolderInterface;
-  documentsAndFolders?: {
-    docs?: (
-      | {
-          relationTo?: 'payload-folders';
-          value: string | FolderInterface;
-        }
-      | {
-          relationTo?: 'media';
-          value: string | Media;
-        }
-    )[];
-    hasNextPage?: boolean;
-    totalDocs?: number;
-  };
-  folderType?: 'media'[] | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -726,6 +840,18 @@ export interface Form {
             blockName?: string | null;
             blockType: 'textarea';
           }
+        | {
+            /**
+             * Submission key — must remain doctorRelationship
+             */
+            name: string;
+            label?: string | null;
+            required?: boolean | null;
+            width?: number | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'doctorRelationship';
+          }
       )[]
     | null;
   submitButtonLabel?: string | null;
@@ -788,223 +914,6 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "articles".
- */
-export interface Article {
-  id: string;
-  title: string;
-  heroImage?: (string | null) | Media;
-  /**
-   * نبذة مختصرة عن المقال تظهر في القوائم
-   */
-  excerpt: string;
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  /**
-   * الفيديو الذي تم استخلاص المقال منه
-   */
-  sourceVideo?: (string | null) | Video;
-  /**
-   * الرابط المباشر للفيديو على يوتيوب
-   */
-  youtubeUrl?: string | null;
-  isAutoGenerated?: boolean | null;
-  /**
-   * تم إنشاؤه من بث مباشر
-   */
-  isLive?: boolean | null;
-  /**
-   * النص الكامل للفيديو المصدر
-   */
-  transcript?: string | null;
-  transcriptLanguage?: string | null;
-  categories?: (string | Category)[] | null;
-  relatedArticles?: (string | Article)[] | null;
-  tags?:
-    | {
-        tag?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  meta?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (string | null) | Media;
-    description?: string | null;
-  };
-  author?: (string | null) | Author;
-  authorName: string;
-  publishedAt: string;
-  /**
-   * يظهر في القسم الرئيسي بالصفحة الأولى
-   */
-  featured?: boolean | null;
-  breakingNews?: boolean | null;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "videos".
- */
-export interface Video {
-  id: string;
-  title: string;
-  videoId: string;
-  youtubeUrl: string;
-  author: string | Author;
-  description?: string | null;
-  thumbnailUrl?: string | null;
-  duration?: string | null;
-  /**
-   * Extracted transcript from the video
-   */
-  transcript?: string | null;
-  transcriptLanguage?: string | null;
-  status?: ('pending' | 'fetched' | 'transcribed' | 'article_generated' | 'failed' | 'no_transcript') | null;
-  errorMessage?: string | null;
-  publishedAt?: string | null;
-  viewCount?: number | null;
-  /**
-   * تم الجلب من بث مباشر
-   */
-  isLive?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "authors".
- */
-export interface Author {
-  id: string;
-  name: string;
-  /**
-   * The YouTube channel ID (e.g., UCxxxxxxx)
-   */
-  channelId: string;
-  /**
-   * Full YouTube channel URL
-   */
-  channelUrl?: string | null;
-  /**
-   * YouTube channel handle (e.g., @channelname)
-   */
-  handle?: string | null;
-  /**
-   * التصنيف الرئيسي للكاتب (مطلوب)
-   */
-  category: string | Category;
-  /**
-   * YouTube channel thumbnail URL (stored for reference)
-   */
-  thumbnailUrl?: string | null;
-  /**
-   * Uploaded photo displayed on author pages
-   */
-  photo?: (string | null) | Media;
-  /**
-   * Author biography for display on website
-   */
-  bio?: string | null;
-  /**
-   * YouTube channel description
-   */
-  description?: string | null;
-  /**
-   * Channel subscriber count
-   */
-  subscriberCount?: number | null;
-  /**
-   * Total videos on channel
-   */
-  videoCount?: number | null;
-  /**
-   * Total channel views
-   */
-  viewCount?: number | null;
-  country?: string | null;
-  joinedDate?: string | null;
-  keywords?:
-    | {
-        keyword?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Channel banner URL
-   */
-  bannerUrl?: string | null;
-  /**
-   * External website URL
-   */
-  websiteUrl?: string | null;
-  /**
-   * Twitter/X username (without @)
-   */
-  twitterHandle?: string | null;
-  /**
-   * Instagram username (without @)
-   */
-  instagramHandle?: string | null;
-  /**
-   * Facebook page URL
-   */
-  facebookUrl?: string | null;
-  meta?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (string | null) | Media;
-    description?: string | null;
-  };
-  /**
-   * Only active authors will be shown on the website
-   */
-  active?: boolean | null;
-  /**
-   * Enable fetching live streams and creating articles from transcripts
-   */
-  fetchLives?: boolean | null;
-  /**
-   * Show in featured authors section
-   */
-  featured?: boolean | null;
-  language?: ('ar' | 'en') | null;
-  lastFetchedAt?: string | null;
-  fetchCount?: number | null;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1062,8 +971,8 @@ export interface Search {
         value: string | Post;
       }
     | {
-        relationTo: 'articles';
-        value: string | Article;
+        relationTo: 'doctors';
+        value: string | Doctor;
       };
   slug?: string | null;
   meta?: {
@@ -1199,6 +1108,10 @@ export interface PayloadLockedDocument {
   id: string;
   document?:
     | ({
+        relationTo: 'doctors';
+        value: string | Doctor;
+      } | null)
+    | ({
         relationTo: 'pages';
         value: string | Page;
       } | null)
@@ -1207,24 +1120,12 @@ export interface PayloadLockedDocument {
         value: string | Post;
       } | null)
     | ({
-        relationTo: 'articles';
-        value: string | Article;
-      } | null)
-    | ({
-        relationTo: 'authors';
-        value: string | Author;
-      } | null)
-    | ({
         relationTo: 'media';
         value: string | Media;
       } | null)
     | ({
         relationTo: 'categories';
         value: string | Category;
-      } | null)
-    | ({
-        relationTo: 'videos';
-        value: string | Video;
       } | null)
     | ({
         relationTo: 'users';
@@ -1291,6 +1192,83 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "doctors_select".
+ */
+export interface DoctorsSelect<T extends boolean = true> {
+  fullName?: T;
+  generateSlug?: T;
+  slug?: T;
+  professionalTitle?: T;
+  specialty?: T;
+  certifiedEurope?: T;
+  featured?: T;
+  published?: T;
+  profileImage?: T;
+  shortBio?: T;
+  biography?: T;
+  languages?:
+    | T
+    | {
+        language?: T;
+        id?: T;
+      };
+  yearsOfExperience?: T;
+  careerHistory?:
+    | T
+    | {
+        role?: T;
+        institution?: T;
+        location?: T;
+        startYear?: T;
+        endYear?: T;
+        isCurrent?: T;
+        summary?: T;
+        id?: T;
+      };
+  europeanCertifications?:
+    | T
+    | {
+        name?: T;
+        issuingBody?: T;
+        country?: T;
+        yearObtained?: T;
+        credentialId?: T;
+        certificateDocument?: T;
+        supportingGallery?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  clinicGallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  procedureGallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1460,98 +1438,10 @@ export interface PostsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "articles_select".
- */
-export interface ArticlesSelect<T extends boolean = true> {
-  title?: T;
-  heroImage?: T;
-  excerpt?: T;
-  content?: T;
-  sourceVideo?: T;
-  youtubeUrl?: T;
-  isAutoGenerated?: T;
-  isLive?: T;
-  transcript?: T;
-  transcriptLanguage?: T;
-  categories?: T;
-  relatedArticles?: T;
-  tags?:
-    | T
-    | {
-        tag?: T;
-        id?: T;
-      };
-  meta?:
-    | T
-    | {
-        title?: T;
-        image?: T;
-        description?: T;
-      };
-  author?: T;
-  authorName?: T;
-  publishedAt?: T;
-  featured?: T;
-  breakingNews?: T;
-  generateSlug?: T;
-  slug?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "authors_select".
- */
-export interface AuthorsSelect<T extends boolean = true> {
-  name?: T;
-  channelId?: T;
-  channelUrl?: T;
-  handle?: T;
-  category?: T;
-  thumbnailUrl?: T;
-  photo?: T;
-  bio?: T;
-  description?: T;
-  subscriberCount?: T;
-  videoCount?: T;
-  viewCount?: T;
-  country?: T;
-  joinedDate?: T;
-  keywords?:
-    | T
-    | {
-        keyword?: T;
-        id?: T;
-      };
-  bannerUrl?: T;
-  websiteUrl?: T;
-  twitterHandle?: T;
-  instagramHandle?: T;
-  facebookUrl?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        image?: T;
-        description?: T;
-      };
-  active?: T;
-  fetchLives?: T;
-  featured?: T;
-  language?: T;
-  lastFetchedAt?: T;
-  fetchCount?: T;
-  generateSlug?: T;
-  slug?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  usage?: T;
   alt?: T;
   caption?: T;
   folder?: T;
@@ -1660,28 +1550,6 @@ export interface CategoriesSelect<T extends boolean = true> {
         label?: T;
         id?: T;
       };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "videos_select".
- */
-export interface VideosSelect<T extends boolean = true> {
-  title?: T;
-  videoId?: T;
-  youtubeUrl?: T;
-  author?: T;
-  description?: T;
-  thumbnailUrl?: T;
-  duration?: T;
-  transcript?: T;
-  transcriptLanguage?: T;
-  status?: T;
-  errorMessage?: T;
-  publishedAt?: T;
-  viewCount?: T;
-  isLive?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1830,6 +1698,16 @@ export interface FormsSelect<T extends boolean = true> {
               width?: T;
               defaultValue?: T;
               required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        doctorRelationship?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              required?: T;
+              width?: T;
               id?: T;
               blockName?: T;
             };
@@ -2103,10 +1981,6 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'posts';
           value: string | Post;
-        } | null)
-      | ({
-          relationTo: 'articles';
-          value: string | Article;
         } | null);
     global?: string | null;
     user?: (string | null) | User;

@@ -10,11 +10,14 @@ import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/
 import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 
+import { formDoctorRelationshipBlock } from '@/fields/formDoctorRelationship'
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 
+const siteName = 'Hur Travel Medical'
+
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | أخبار 24` : 'أخبار 24'
+  return doc?.title ? `${doc.title} | ${siteName}` : siteName
 }
 
 const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
@@ -57,6 +60,7 @@ export const plugins: Plugin[] = [
   formBuilderPlugin({
     fields: {
       payment: false,
+      doctorRelationship: formDoctorRelationshipBlock,
     },
     formOverrides: {
       fields: ({ defaultFields }) => {
@@ -81,7 +85,7 @@ export const plugins: Plugin[] = [
     },
   }),
   searchPlugin({
-    collections: ['posts', 'articles'],
+    collections: ['posts', 'doctors'],
     beforeSync: beforeSyncWithSearch,
     searchOverrides: {
       fields: ({ defaultFields }) => {

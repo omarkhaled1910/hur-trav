@@ -25,6 +25,22 @@ export const Media: CollectionConfig = {
   },
   fields: [
     {
+      name: 'usage',
+      label: 'Usage',
+      type: 'select',
+      options: [
+        { label: 'Doctor Profile', value: 'profile' },
+        { label: 'Clinic Gallery', value: 'clinic' },
+        { label: 'Procedure / Clinical', value: 'procedure' },
+        { label: 'Certificate / Document', value: 'certificate' },
+        { label: 'General', value: 'general' },
+      ],
+      defaultValue: 'general',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'alt',
       type: 'text',
       //required: true,

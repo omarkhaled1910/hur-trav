@@ -16,10 +16,13 @@ export const Logo = (props: Props) => {
 
   return (
     <div className={clsx('flex items-center gap-2', className)}>
-      <div className="bg-red-600 text-white font-bold text-xl px-3 py-1 rounded-md leading-none">
-        24
+      <div className="bg-teal-700 text-white font-bold text-sm px-2.5 py-1 rounded-md leading-none tracking-wide">
+        HT
       </div>
-      <span className="text-xl font-bold text-foreground dark:text-white" style={{ fontFamily: 'Cairo, sans-serif' }}>
+      <span
+        className="text-xl font-bold text-foreground dark:text-white"
+        style={{ fontFamily: 'Cairo, sans-serif' }}
+      >
         {t('common.brandText')}
       </span>
     </div>

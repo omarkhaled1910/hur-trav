@@ -1,118 +1,108 @@
 import React from 'react'
+import Link from 'next/link'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
-import { ArticleCarousel } from '@/components/ArticleCarousel'
-import { LatestArticlesInfinite } from '@/components/LatestArticlesInfinite'
-import { BreakingNewsTicker } from '@/components/BreakingNews'
-import { Sidebar } from '@/components/Sidebar'
-import { CategoryGrid } from '@/components/CategoryGrid'
-import { getServerI18n } from '@/i18n/server'
 
-const getHomepageData = unstable_cache(
+import { MedicalHero } from '@/components/medical/MedicalHero'
+import { PackageHighlight } from '@/components/medical/PackageHighlight'
+import { DoctorCard } from '@/components/medical/DoctorCard'
+import { getServerI18n } from '@/i18n/server'
+import { Button } from '@/components/ui/button'
+
+const getHomepageDoctors = unstable_cache(
   async () => {
     try {
       const payload = await getPayload({ config: configPromise })
-
-      // Fetch featured/hero article
-      const featuredResult = await payload.find({
-        collection: 'articles',
+      const { docs } = await payload.find({
+        collection: 'doctors',
         where: {
-          _status: { equals: 'published' },
-          featured: { equals: true },
+          published: { equals: true },
         },
-        limit: 1,
-        sort: '-publishedAt',
+        limit: 6,
+        sort: '-featured,fullName',
         depth: 2,
       })
-
-      // Fetch latest articles
-      const latestResult = await payload.find({
-        collection: 'articles',
-        where: {
-          _status: { equals: 'published' },
-        },
-        limit: 12,
-        sort: '-publishedAt',
-        depth: 2,
-      })
-
-      // Fetch breaking news
-      const breakingResult = await payload.find({
-        collection: 'articles',
-        where: {
-          _status: { equals: 'published' },
-          breakingNews: { equals: true },
-        },
-        limit: 5,
-        sort: '-publishedAt',
-      })
-
-      // Fetch categories
-      const categoriesResult = await payload.find({
-        collection: 'categories',
-        limit: 20,
-      })
-
-      return {
-        featured: featuredResult.docs[0] || null,
-        latest: latestResult.docs || [],
-        breaking: breakingResult.docs || [],
-        categories: categoriesResult.docs || [],
-      }
+      return docs
     } catch (error) {
-      console.warn('Database unavailable, rendering homepage without data:', error)
-      return {
-        featured: null,
-        latest: [],
-        breaking: [],
-        categories: [],
-      }
+      console.warn('Database unavailable, rendering homepage without doctors:', error)
+      return []
     }
   },
-  ['homepage'],
-  { tags: ['homepage'], revalidate: 60 },
+  ['homepage-doctors'],
+  { tags: ['doctors'], revalidate: 60 },
 )
 
 export default async function HomePage() {
-  const { locale, t } = await getServerI18n()
-  const { featured, latest, breaking, categories } = await getHomepageData()
+  const { t } = await getServerI18n()
+  const doctors = await getHomepageDoctors()
 
-  // Carousel articles (top 5 latest)
-  const carouselArticles = latest.slice(0, 5)
-  const gridArticles = latest.slice(5, 13)
-  const sidebarArticles = latest.slice(0, 5)
+  const packageSteps = [
+    {
+      title: t('package.step1Title'),
+      description: t('package.step1Description'),
+    },
+    {
+      title: t('package.step2Title'),
+      description: t('package.step2Description'),
+    },
+    {
+      title: t('package.step3Title'),
+      description: t('package.step3Description'),
+    },
+    {
+      title: t('package.step4Title'),
+      description: t('package.step4Description'),
+    },
+  ]
 
   return (
     <main className="min-h-screen">
-      {/* Category Grid - First Component */}
-      {categories.length > 0 && <CategoryGrid categories={categories} locale={locale} />}
+      <MedicalHero
+        title={t('home.heroTitle')}
+        subtitle={t('home.heroSubtitle')}
+        ctaLabel={t('home.ctaConsultation')}
+        secondaryCtaLabel={t('nav.doctors')}
+      />
 
-      {/* Breaking News Ticker */}
-      {breaking.length > 0 && <BreakingNewsTicker articles={breaking} />}
+      <PackageHighlight title={t('package.title')} items={packageSteps} />
 
-      {/* Hero Section */}
-      {/* Main Carousel */}
-      <section className="container mt-6">
-        {carouselArticles.length > 0 && (
-          <ArticleCarousel articles={carouselArticles} locale={locale} />
+      <section className="container py-14 md:py-16">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground md:text-3xl">{t('home.featuredDoctors')}</h2>
+            <p className="mt-2 max-w-xl text-muted-foreground">{t('home.featuredDoctorsDescription')}</p>
+          </div>
+          <Button asChild variant="outline" className="border-teal-700/30">
+            <Link href="/doctors">{t('home.viewAllDoctors')}</Link>
+          </Button>
+        </div>
+
+        {doctors.length > 0 ? (
+          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {doctors.map((doctor) => (
+              <li key={doctor.id}>
+                <DoctorCard doctor={doctor} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="rounded-lg border border-dashed border-border p-8 text-center text-muted-foreground">
+            {t('doctors.empty')}
+          </p>
         )}
       </section>
 
-      {/* Sidebar */}
-      <section className="container mt-6">
-        <Sidebar articles={sidebarArticles} categories={categories} locale={locale} />
-      </section>
-
-      {/* Latest Articles Grid - Infinite Scroll */}
-      <section className="container mt-10 mb-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-foreground border-r-4 border-red-600 pr-4">
-            {t('home.latestNews')}
-          </h2>
+      <section className="bg-teal-900 py-14 text-white md:py-16">
+        <div className="container flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="max-w-xl">
+            <h2 className="text-2xl font-bold md:text-3xl">{t('home.ctaBandTitle')}</h2>
+            <p className="mt-2 text-teal-100">{t('home.ctaBandDescription')}</p>
+          </div>
+          <Button asChild size="lg" className="bg-white text-teal-900 hover:bg-teal-50">
+            <Link href="/consultation">{t('home.ctaConsultation')}</Link>
+          </Button>
         </div>
-
-        <LatestArticlesInfinite initialArticles={gridArticles} locale={locale} initialCount={8} />
       </section>
     </main>
   )

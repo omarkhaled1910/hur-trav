@@ -23,7 +23,7 @@ export const Search: React.FC<{
     router.push(`/search${debouncedValue ? `?q=${debouncedValue}` : ''}`)
   }, [debouncedValue, router])
 
-  const placeholder = locale === 'ar' ? 'ابحث عن المقالات...' : 'Search articles...'
+  const placeholder = locale === 'ar' ? 'ابحث عن الأطباء والمحتوى...' : 'Search doctors and content...'
 
   return (
     <div className="relative">

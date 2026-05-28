@@ -9,9 +9,7 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
-import { Videos } from './collections/Videos'
-import { Articles } from './collections/Articles'
-import { Authors } from './collections/Authors'
+import { Doctors } from './collections/Doctors'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
@@ -57,9 +55,6 @@ export default buildConfig({
   editor: defaultLexical,
   db: mongooseAdapter({
     url: process.env.NEXT_PRIVATE_DATABASE_URL || '',
-    // Disable MongoDB transactions to prevent timeout errors in long-running
-    // background pipelines (cron news pipeline). This project's hooks only
-    // perform cache revalidation, so transactional atomicity is not required.
     transactionOptions: false,
     // Ensure SSL/TLS works with Vercel and MongoDB Atlas
     connectOptions: {
@@ -76,17 +71,15 @@ export default buildConfig({
     },
   }),
   collections: [
+    // Medical tourism
+    Doctors,
     // Content
     Pages,
     Posts,
-    Articles,
-    Authors,
     // Media
     Media,
     // Taxonomies
     Categories,
-    // News Automation
-    Videos,
     // Auth
     Users,
   ],

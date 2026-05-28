@@ -35,8 +35,14 @@ export async function Footer() {
               <Link href="/" className="text-sm text-gray-400 hover:text-white transition-colors">
                 {t('nav.home')}
               </Link>
-              <Link href="/articles" className="text-sm text-gray-400 hover:text-white transition-colors">
-                {t('nav.latestNews')}
+              <Link href="/doctors" className="text-sm text-gray-400 hover:text-white transition-colors">
+                {t('nav.doctors')}
+              </Link>
+              <Link
+                href="/consultation"
+                className="text-sm text-gray-400 hover:text-white transition-colors"
+              >
+                {t('nav.consultation')}
               </Link>
               {navItems.map(({ link }, i) => {
                 return <CMSLink className="text-sm text-gray-400 hover:text-white transition-colors" key={i} {...link} />

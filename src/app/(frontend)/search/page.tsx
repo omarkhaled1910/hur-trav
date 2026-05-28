@@ -103,9 +103,10 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
   )
 }
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerI18n()
   return {
-    title: 'Search | News 24',
-    description: 'Search articles on News 24',
+    title: t('search.title'),
+    description: t('meta.homeDescription'),
   }
 }

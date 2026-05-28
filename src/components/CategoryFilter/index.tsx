@@ -34,7 +34,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
             {/* All Categories Option */}
             <li>
               <Link
-                href="/articles"
+                href="/search"
                 className={`
                   flex items-center gap-3 px-4 py-2.5 rounded-lg
                   transition-all duration-200
@@ -61,7 +61,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
               return (
                 <li key={category.id}>
                   <Link
-                    href={`/articles?category=${category.slug}`}
+                    href={`/search?category=${category.slug}`}
                     className={`
                       flex items-center gap-3 px-4 py-2.5 rounded-lg
                       transition-all duration-200

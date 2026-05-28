@@ -46,17 +46,20 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
 
           {/* Center nav */}
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <Link href="/" className="text-foreground hover:text-red-600 transition-colors">
+            <Link href="/" className="text-foreground hover:text-teal-700 dark:hover:text-teal-300 transition-colors">
               {t('nav.home')}
             </Link>
-            <Link href="/articles" className="text-foreground hover:text-red-600 transition-colors">
-              {t('nav.latestNews')}
+            <Link
+              href="/doctors"
+              className="text-foreground hover:text-teal-700 dark:hover:text-teal-300 transition-colors"
+            >
+              {t('nav.doctors')}
             </Link>
-            <Link href="/feed" className="text-foreground hover:text-red-600 transition-colors">
-              {t('nav.feed')}
-            </Link>
-            <Link href="/authors" className="text-foreground hover:text-red-600 transition-colors">
-              {t('nav.authors')}
+            <Link
+              href="/consultation"
+              className="text-foreground hover:text-teal-700 dark:hover:text-teal-300 transition-colors"
+            >
+              {t('nav.consultation')}
             </Link>
             <HeaderNav data={data} />
           </nav>
