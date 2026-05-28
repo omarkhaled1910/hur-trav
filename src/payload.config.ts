@@ -10,6 +10,7 @@ import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
 import { Doctors } from './collections/Doctors'
+import { Hotels } from './collections/Hotels'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
@@ -70,6 +71,7 @@ export default buildConfig({
   }),
   collections: [
     Doctors,
+    Hotels,
     Pages,
     Posts,
     Media,

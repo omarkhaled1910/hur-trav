@@ -7,7 +7,10 @@ import { unstable_cache } from 'next/cache'
 import { MedicalHero } from '@/components/medical/MedicalHero'
 import { PackageHighlight } from '@/components/medical/PackageHighlight'
 import { DoctorCard } from '@/components/medical/DoctorCard'
+import { WhereYouCanBe } from '@/components/medical/WhereYouCanBe'
 import { getServerI18n } from '@/i18n/server'
+import { getDirection } from '@/i18n/translations'
+import { flattenHotelGallerySlides } from '@/utilities/flattenHotelGallerySlides'
 import { Button } from '@/components/ui/button'
 
 const getHomepageDoctors = unstable_cache(
@@ -33,9 +36,33 @@ const getHomepageDoctors = unstable_cache(
   { tags: ['doctors'], revalidate: 60 },
 )
 
+const getHomepageHotels = unstable_cache(
+  async () => {
+    try {
+      const payload = await getPayload({ config: configPromise })
+      const { docs } = await payload.find({
+        collection: 'hotels',
+        where: {
+          published: { equals: true },
+        },
+        limit: 20,
+        sort: 'sortOrder',
+        depth: 2,
+      })
+      return docs
+    } catch (error) {
+      console.warn('Database unavailable, rendering homepage without hotels:', error)
+      return []
+    }
+  },
+  ['homepage-hotels'],
+  { tags: ['hotels'], revalidate: 60 },
+)
+
 export default async function HomePage() {
-  const { t } = await getServerI18n()
-  const doctors = await getHomepageDoctors()
+  const { locale, t } = await getServerI18n()
+  const [doctors, hotels] = await Promise.all([getHomepageDoctors(), getHomepageHotels()])
+  const hotelSlides = flattenHotelGallerySlides(hotels)
 
   const packageSteps = [
     {
@@ -66,6 +93,17 @@ export default async function HomePage() {
       />
 
       <PackageHighlight title={t('package.title')} items={packageSteps} />
+
+      <WhereYouCanBe
+        title={t('home.whereYouCanBe')}
+        description={t('home.whereYouCanBeDescription')}
+        slides={hotelSlides}
+        imagesPerPage={6}
+        previousLabel={t('pagination.previous')}
+        nextLabel={t('pagination.next')}
+        emptyLabel={t('home.hotelsEmpty')}
+        isRtl={getDirection(locale) === 'rtl'}
+      />
 
       <section className="container py-14 md:py-16">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">

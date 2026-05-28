@@ -32,6 +32,7 @@ export const Media: CollectionConfig = {
         { label: 'Clinic Gallery', value: 'clinic' },
         { label: 'Procedure / Clinical', value: 'procedure' },
         { label: 'Certificate / Document', value: 'certificate' },
+        { label: 'Hotel / Stay', value: 'hotel' },
         { label: 'General', value: 'general' },
       ],
       defaultValue: 'general',

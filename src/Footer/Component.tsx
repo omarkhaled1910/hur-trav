@@ -7,6 +7,10 @@ import type { Footer } from '@/payload-types'
 import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
 import { getServerI18n } from '@/i18n/server'
+import { cn } from '@/utilities/ui'
+
+const footerLinkClass =
+  'text-sm text-muted-foreground transition-colors hover:text-teal-700 dark:hover:text-teal-300'
 
 export async function Footer() {
   const footerData: Footer = await getCachedGlobal('footer', 1)()
@@ -15,58 +19,52 @@ export async function Footer() {
   const navItems = footerData?.navItems || []
 
   return (
-    <footer className="mt-auto bg-gray-900 text-gray-300">
-      <div className="container py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Brand */}
+    <footer className="mt-auto border-t border-border bg-muted/50">
+      <div className="container py-10 md:py-12">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div>
-            <Link className="flex items-center mb-4" href="/">
-              <Logo className="[&_span]:text-white" />
+            <Link className="mb-4 flex items-center" href="/">
+              <Logo />
             </Link>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              {t('footer.description')}
-            </p>
+            <p className="text-sm leading-relaxed text-muted-foreground">{t('footer.description')}</p>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <h4 className="text-white font-bold mb-4">{t('nav.quickLinks')}</h4>
+            <h4 className="mb-4 font-semibold text-foreground">{t('nav.quickLinks')}</h4>
             <nav className="flex flex-col gap-2">
-              <Link href="/" className="text-sm text-gray-400 hover:text-white transition-colors">
+              <Link href="/" className={footerLinkClass}>
                 {t('nav.home')}
               </Link>
-              <Link href="/doctors" className="text-sm text-gray-400 hover:text-white transition-colors">
+              <Link href="/doctors" className={footerLinkClass}>
                 {t('nav.doctors')}
               </Link>
-              <Link
-                href="/consultation"
-                className="text-sm text-gray-400 hover:text-white transition-colors"
-              >
+              <Link href="/consultation" className={footerLinkClass}>
                 {t('nav.consultation')}
               </Link>
               {navItems.map(({ link }, i) => {
-                return <CMSLink className="text-sm text-gray-400 hover:text-white transition-colors" key={i} {...link} />
+                return <CMSLink className={footerLinkClass} key={i} {...link} />
               })}
             </nav>
           </div>
 
-          {/* Info */}
           <div>
-            <h4 className="text-white font-bold mb-4">{t('nav.aboutSite')}</h4>
-            <p className="text-sm text-gray-400 leading-relaxed">
+            <h4 className="mb-4 font-semibold text-foreground">{t('nav.aboutSite')}</h4>
+            <p className="text-sm leading-relaxed text-muted-foreground">
               {t('footer.aboutDescription')}
             </p>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-8 pt-6 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-gray-500">
+        <div
+          className={cn(
+            'mt-8 flex flex-col items-center justify-between gap-4 border-t border-border pt-6',
+            'md:flex-row',
+          )}
+        >
+          <p className="text-xs text-muted-foreground">
             {t('footer.rightsReserved', { year: new Date().getFullYear() })}
           </p>
-          <p className="text-xs text-gray-500">
-            {t('footer.poweredBy')}
-          </p>
+          <p className="text-xs text-muted-foreground">{t('footer.poweredBy')}</p>
         </div>
       </div>
     </footer>

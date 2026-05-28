@@ -68,6 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     doctors: Doctor;
+    hotels: Hotel;
     pages: Page;
     posts: Post;
     media: Media;
@@ -91,6 +92,7 @@ export interface Config {
   };
   collectionsSelect: {
     doctors: DoctorsSelect<false> | DoctorsSelect<true>;
+    hotels: HotelsSelect<false> | HotelsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -273,7 +275,7 @@ export interface Doctor {
  */
 export interface Media {
   id: string;
-  usage?: ('profile' | 'clinic' | 'procedure' | 'certificate' | 'general') | null;
+  usage?: ('profile' | 'clinic' | 'procedure' | 'certificate' | 'hotel' | 'general') | null;
   alt?: string | null;
   caption?: {
     root: {
@@ -384,6 +386,32 @@ export interface FolderInterface {
     totalDocs?: number;
   };
   folderType?: 'media'[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Add Hurghada hotels for the homepage gallery. Upload multiple photos in one go via the gallery field.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hotels".
+ */
+export interface Hotel {
+  id: string;
+  name: string;
+  /**
+   * Optional marketing blurb shown on the homepage gallery
+   */
+  shortDescription?: string | null;
+  /**
+   * Bulk upload: drag multiple files into the picker, or select many existing images at once. Order here is used on the homepage.
+   */
+  images: (string | Media)[];
+  featured?: boolean | null;
+  published?: boolean | null;
+  /**
+   * Lower numbers appear first on the homepage
+   */
+  sortOrder?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1112,6 +1140,10 @@ export interface PayloadLockedDocument {
         value: string | Doctor;
       } | null)
     | ({
+        relationTo: 'hotels';
+        value: string | Hotel;
+      } | null)
+    | ({
         relationTo: 'pages';
         value: string | Page;
       } | null)
@@ -1267,6 +1299,20 @@ export interface DoctorsSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hotels_select".
+ */
+export interface HotelsSelect<T extends boolean = true> {
+  name?: T;
+  shortDescription?: T;
+  images?: T;
+  featured?: T;
+  published?: T;
+  sortOrder?: T;
   updatedAt?: T;
   createdAt?: T;
 }

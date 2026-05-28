@@ -69,6 +69,11 @@ const translations: Record<Locale, TranslationDictionary> = {
     'home.featuredDoctors': 'أطباؤنا المعتمدون',
     'home.featuredDoctorsDescription': 'تعرف على فريقنا من الاستشاريين ذوي الخبرة الدولية.',
     'home.viewAllDoctors': 'عرض جميع الأطباء',
+    'home.whereYouCanBe': 'أين يمكنك الإقامة',
+    'home.whereYouCanBeDescription':
+      'إقامات فاخرة في الغردقة على البحر الأحمر — بالقرب من عياداتنا وبرامج التعافي.',
+    'home.hotelsEmpty':
+      'لا توجد صور فنادق بعد. أضف فندقاً من لوحة التحكم وارفع صور المعرض دفعة واحدة.',
     'home.ctaBandTitle': 'ابدأ رحلتك العلاجية',
     'home.ctaBandDescription': 'فريقنا الطبي ينسق إقامتك والإجراء والمتابعة بعد العلاج.',
     'package.title': 'برنامج الإقامة العلاجية 10 أيام',
@@ -196,6 +201,11 @@ const translations: Record<Locale, TranslationDictionary> = {
     'home.featuredDoctors': 'Our certified doctors',
     'home.featuredDoctorsDescription': 'Meet consultants with international training and proven outcomes.',
     'home.viewAllDoctors': 'View all doctors',
+    'home.whereYouCanBe': 'Where you can stay',
+    'home.whereYouCanBeDescription':
+      'Premium Hurghada stays on the Red Sea — close to our partner clinics and recovery programs.',
+    'home.hotelsEmpty':
+      'No hotel gallery yet. Add a hotel in the admin and bulk-upload gallery photos.',
     'home.ctaBandTitle': 'Start your care journey',
     'home.ctaBandDescription': 'Our medical concierge coordinates your stay, procedure, and follow-up.',
     'package.title': 'Your 10-day clinical stay',
