@@ -58,7 +58,9 @@ export default async function DoctorDetailPage({ params }: Args) {
       <div className="grid gap-10 lg:grid-cols-[minmax(0,340px)_1fr] lg:gap-14">
         <aside className="space-y-4">
           <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-border bg-muted">
-            {profileImage && <ImageMedia fill imgClassName="object-cover" resource={profileImage} />}
+            {profileImage && (
+              <ImageMedia fill imgClassName="object-cover" resource={profileImage} />
+            )}
           </div>
           <Button asChild className="w-full bg-teal-700 hover:bg-teal-800">
             <Link href={`/consultation?doctor=${doctor.id}`}>{t('doctors.bookConsultation')}</Link>

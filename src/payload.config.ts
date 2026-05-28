@@ -56,14 +56,12 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.NEXT_PRIVATE_DATABASE_URL || '',
     transactionOptions: false,
-    // Ensure SSL/TLS works with Vercel and MongoDB Atlas
     connectOptions: {
       serverSelectionTimeoutMS: 10000,
-      socketTimeoutMS: 120000, // Increased to 2 minutes for long-running operations
-      maxPoolSize: 10, // Maximum pool size
-      minPoolSize: 2, // Minimum pool size
-      maxIdleTimeMS: 30000, // Close idle connections after 30 seconds
-      // TLS configuration - only enable for production (MongoDB Atlas), not local MongoDB
+      socketTimeoutMS: 120000,
+      maxPoolSize: 10,
+      minPoolSize: 2,
+      maxIdleTimeMS: 30000,
       ...(process.env.NEXT_PRIVATE_DATABASE_URL?.includes('mongodb+srv') ||
       process.env.NEXT_PRIVATE_DATABASE_URL?.includes('ssl=true')
         ? { tls: true }
@@ -71,16 +69,11 @@ export default buildConfig({
     },
   }),
   collections: [
-    // Medical tourism
     Doctors,
-    // Content
     Pages,
     Posts,
-    // Media
     Media,
-    // Taxonomies
     Categories,
-    // Auth
     Users,
   ],
   cors: [getServerSideURL()].filter(Boolean),
