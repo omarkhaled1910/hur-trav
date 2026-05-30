@@ -72,7 +72,6 @@ export interface Config {
     pages: Page;
     posts: Post;
     media: Media;
-    categories: Category;
     users: User;
     redirects: Redirect;
     forms: Form;
@@ -96,7 +95,6 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -112,7 +110,7 @@ export interface Config {
   db: {
     defaultIDType: string;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'ar') | ('en' | 'ar')[];
   globals: {
     header: Header;
     footer: Footer;
@@ -121,7 +119,7 @@ export interface Config {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
   };
-  locale: null;
+  locale: 'en' | 'ar';
   user: User;
   jobs: {
     tasks: {
@@ -239,9 +237,9 @@ export interface Doctor {
       }[]
     | null;
   /**
-   * Facility, consultation rooms, and clinic environment
+   * Doctor-level procedure imagery not tied to a specific surgery entry (ensure patient consent in admin workflow)
    */
-  clinicGallery?:
+  procedureGallery?:
     | {
         image: string | Media;
         caption?: string | null;
@@ -249,12 +247,78 @@ export interface Doctor {
       }[]
     | null;
   /**
-   * Post-procedure and clinical imagery (ensure patient consent in admin workflow)
+   * Offered procedures with typical pricing, downtime, and stay guidance for medical travelers.
    */
-  procedureGallery?:
+  surgeries?:
     | {
-        image: string | Media;
-        caption?: string | null;
+        title: string;
+        /**
+         * e.g. Body contouring, Facial
+         */
+        procedureCategory?: string | null;
+        /**
+         * What the procedure involves and who it suits
+         */
+        description?: string | null;
+        /**
+         * Typical package or procedure average
+         */
+        averagePrice?: number | null;
+        priceCurrency?: ('USD' | 'EUR' | 'GBP' | 'EGP') | null;
+        /**
+         * e.g. incl. consultation, from
+         */
+        priceNote?: string | null;
+        /**
+         * Time off work / limited activity (e.g. 5–7 days)
+         */
+        downtime?: string | null;
+        /**
+         * Suggested nights in destination (e.g. 7–10 nights)
+         */
+        stayTime?: string | null;
+        anesthesiaType?: ('local' | 'sedation' | 'general' | 'varies' | 'none') | null;
+        featuredProcedure?: boolean | null;
+        /**
+         * Follow-up visits, compression garments, activity limits, etc.
+         */
+        recoveryNotes?: string | null;
+        /**
+         * Separate cases or visits for this procedure—each with its own photos and notes (ensure consent for clinical images).
+         */
+        occurrences?:
+          | {
+              /**
+               * e.g. Case study — primary rhinoplasty
+               */
+              title: string;
+              /**
+               * Procedure or visit date (optional)
+               */
+              occurrenceDate?: string | null;
+              stage?: ('pre_op' | 'post_op_early' | 'post_op_followup' | 'long_term' | 'other') | null;
+              /**
+               * Goals, technique notes, or context for this occurrence
+               */
+              summary?: string | null;
+              /**
+               * Anonymized, patient-safe notes suitable for the public site
+               */
+              outcomeNotes?: string | null;
+              photos?:
+                | {
+                    image: string | Media;
+                    caption?: string | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Optional photo for listings or detail cards
+         */
+        heroImage?: (string | null) | Media;
         id?: string | null;
       }[]
     | null;
@@ -508,7 +572,6 @@ export interface Post {
     [k: string]: unknown;
   };
   relatedPosts?: (string | Post)[] | null;
-  categories?: (string | Category)[] | null;
   meta?: {
     title?: string | null;
     /**
@@ -533,32 +596,6 @@ export interface Post {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
- */
-export interface Category {
-  id: string;
-  categoryId: string;
-  categoryEn: string;
-  categoryAr: string;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  parent?: (string | null) | Category;
-  breadcrumbs?:
-    | {
-        doc?: (string | null) | Category;
-        url?: string | null;
-        label?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -716,7 +753,6 @@ export interface ArchiveBlock {
   } | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'posts' | null;
-  categories?: (string | Category)[] | null;
   limit?: number | null;
   selectedDocs?:
     | {
@@ -980,6 +1016,10 @@ export interface FormSubmission {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Site language when the visitor submitted this form.
+   */
+  locale?: ('en' | 'ar') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1008,14 +1048,6 @@ export interface Search {
     description?: string | null;
     image?: (string | null) | Media;
   };
-  categories?:
-    | {
-        relationTo?: string | null;
-        categoryID?: string | null;
-        title?: string | null;
-        id?: string | null;
-      }[]
-    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1156,10 +1188,6 @@ export interface PayloadLockedDocument {
         value: string | Media;
       } | null)
     | ({
-        relationTo: 'categories';
-        value: string | Category;
-      } | null)
-    | ({
         relationTo: 'users';
         value: string | User;
       } | null)
@@ -1278,18 +1306,45 @@ export interface DoctorsSelect<T extends boolean = true> {
             };
         id?: T;
       };
-  clinicGallery?:
+  procedureGallery?:
     | T
     | {
         image?: T;
         caption?: T;
         id?: T;
       };
-  procedureGallery?:
+  surgeries?:
     | T
     | {
-        image?: T;
-        caption?: T;
+        title?: T;
+        procedureCategory?: T;
+        description?: T;
+        averagePrice?: T;
+        priceCurrency?: T;
+        priceNote?: T;
+        downtime?: T;
+        stayTime?: T;
+        anesthesiaType?: T;
+        featuredProcedure?: T;
+        recoveryNotes?: T;
+        occurrences?:
+          | T
+          | {
+              title?: T;
+              occurrenceDate?: T;
+              stage?: T;
+              summary?: T;
+              outcomeNotes?: T;
+              photos?:
+                | T
+                | {
+                    image?: T;
+                    caption?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        heroImage?: T;
         id?: T;
       };
   meta?:
@@ -1434,7 +1489,6 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
   introContent?: T;
   populateBy?: T;
   relationTo?: T;
-  categories?: T;
   limit?: T;
   selectedDocs?: T;
   id?: T;
@@ -1460,7 +1514,6 @@ export interface PostsSelect<T extends boolean = true> {
   heroImage?: T;
   content?: T;
   relatedPosts?: T;
-  categories?: T;
   meta?:
     | T
     | {
@@ -1576,28 +1629,6 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
       };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories_select".
- */
-export interface CategoriesSelect<T extends boolean = true> {
-  categoryId?: T;
-  categoryEn?: T;
-  categoryAr?: T;
-  generateSlug?: T;
-  slug?: T;
-  parent?: T;
-  breadcrumbs?:
-    | T
-    | {
-        doc?: T;
-        url?: T;
-        label?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1794,6 +1825,7 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
+  locale?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1812,14 +1844,6 @@ export interface SearchSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         image?: T;
-      };
-  categories?:
-    | T
-    | {
-        relationTo?: T;
-        categoryID?: T;
-        title?: T;
-        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
 import { fields } from './fields'
+import { useI18n } from '@/i18n/client'
 import { getClientSideURL } from '@/utilities/getURL'
 
 export type FormBlockType = {
@@ -45,6 +46,7 @@ export const FormBlock: React.FC<
   const [hasSubmitted, setHasSubmitted] = useState<boolean>()
   const [error, setError] = useState<{ message: string; status?: string } | undefined>()
   const router = useRouter()
+  const { locale } = useI18n()
 
   const onSubmit = useCallback(
     (data: FormFieldBlock[]) => {
@@ -66,6 +68,7 @@ export const FormBlock: React.FC<
           const req = await fetch(`${getClientSideURL()}/api/form-submissions`, {
             body: JSON.stringify({
               form: formID,
+              locale,
               submissionData: dataToSend,
             }),
             headers: {
@@ -110,7 +113,7 @@ export const FormBlock: React.FC<
 
       void submitForm()
     },
-    [router, formID, redirect, confirmationType],
+    [router, formID, redirect, confirmationType, locale],
   )
 
   return (

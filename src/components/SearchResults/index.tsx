@@ -10,19 +10,17 @@ import type { Locale } from '@/i18n/translations'
 
 interface SearchResultsProps {
   query: string
-  category?: string
   sort?: string
   locale?: Locale
 }
 
 export const SearchResults: React.FC<SearchResultsProps> = ({
   query,
-  category,
   sort,
   locale = 'ar',
 }) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
-    useSearchInfinite({ query, category, sort, limit: 12 })
+    useSearchInfinite({ query, sort, limit: 12 })
 
   const { ref: loadMoreRef, inView } = useInView({
     threshold: 0.1,

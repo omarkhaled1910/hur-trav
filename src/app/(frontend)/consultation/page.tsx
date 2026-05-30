@@ -15,11 +15,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ConsultationPage() {
-  const { t } = await getServerI18n()
+  const { locale, t } = await getServerI18n()
   const payload = await getPayload({ config: configPromise })
 
   const { docs: forms } = await payload.find({
     collection: 'forms',
+    locale,
+    fallbackLocale: 'en',
     where: {
       title: { equals: 'Medical Consultation' },
     },

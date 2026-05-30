@@ -4,7 +4,6 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 
 interface SearchParams {
   query: string
-  category?: string
   sort?: string
   limit?: number
 }
@@ -14,8 +13,7 @@ interface SearchResponse {
     id: string | number
     title: string
     slug: string
-    categories?: any[]
-    meta?: any
+    meta?: Record<string, unknown>
     publishedAt: string
   }>
   totalDocs: number
@@ -24,13 +22,12 @@ interface SearchResponse {
 }
 
 async function fetchSearchResults(
-  params: SearchParams & { page: number }
+  params: SearchParams & { page: number },
 ): Promise<SearchResponse> {
-  const { query, category, sort, page, limit = 12 } = params
+  const { query, sort, page, limit = 12 } = params
 
   const searchParams = new URLSearchParams()
   if (query) searchParams.set('q', query)
-  if (category) searchParams.set('category', category)
   if (sort) searchParams.set('sort', sort)
   searchParams.set('page', String(page))
   searchParams.set('limit', String(limit))
@@ -44,15 +41,14 @@ async function fetchSearchResults(
 }
 
 export function useSearchInfinite(params: SearchParams) {
-  const { query, category, sort, limit = 12 } = params
+  const { query, sort, limit = 12 } = params
 
   return useInfiniteQuery({
-    queryKey: ['search', { query, category, sort, limit }],
+    queryKey: ['search', { query, sort, limit }],
     queryFn: ({ pageParam = 1 }) =>
-      fetchSearchResults({ query, category, sort, page: pageParam, limit }),
+      fetchSearchResults({ query, sort, page: pageParam, limit }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: SearchResponse) => {
-      // Use the API's hasNextPage to determine if there are more results
       if (lastPage.hasNextPage && lastPage.nextPage) {
         return lastPage.nextPage
       }

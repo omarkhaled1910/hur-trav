@@ -1,5 +1,4 @@
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
-import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
@@ -49,10 +48,6 @@ export const plugins: Plugin[] = [
       },
     },
   }),
-  nestedDocsPlugin({
-    collections: ['categories'],
-    generateURL: (docs) => docs.reduce((url, doc) => `${url}/${doc.slug}`, ''),
-  }),
   seoPlugin({
     generateTitle,
     generateURL,
@@ -82,6 +77,23 @@ export const plugins: Plugin[] = [
           return field
         })
       },
+    },
+    formSubmissionOverrides: {
+      fields: ({ defaultFields }) => [
+        ...defaultFields,
+        {
+          name: 'locale',
+          type: 'select',
+          options: [
+            { label: 'English', value: 'en' },
+            { label: 'Arabic', value: 'ar' },
+          ],
+          admin: {
+            readOnly: true,
+            description: 'Site language when the visitor submitted this form.',
+          },
+        },
+      ],
     },
   }),
   searchPlugin({

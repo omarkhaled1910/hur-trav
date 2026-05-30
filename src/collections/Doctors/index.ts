@@ -282,14 +282,15 @@ export const Doctors: CollectionConfig = {
           ],
         },
         {
-          label: 'Galleries',
+          label: 'Procedure gallery',
           fields: [
             {
-              name: 'clinicGallery',
-              label: 'Clinic Gallery',
+              name: 'procedureGallery',
+              label: 'General procedure gallery',
               type: 'array',
               admin: {
-                description: 'Facility, consultation rooms, and clinic environment',
+                description:
+                  'Doctor-level procedure imagery not tied to a specific surgery entry (ensure patient consent in admin workflow)',
               },
               fields: [
                 {
@@ -304,24 +305,235 @@ export const Doctors: CollectionConfig = {
                 },
               ],
             },
+          ],
+        },
+        {
+          label: 'Surgeries',
+          fields: [
             {
-              name: 'procedureGallery',
-              label: 'Procedure Gallery',
+              name: 'surgeries',
+              label: 'Procedures & surgeries',
               type: 'array',
               admin: {
+                initCollapsed: true,
                 description:
-                  'Post-procedure and clinical imagery (ensure patient consent in admin workflow)',
+                  'Offered procedures with typical pricing, downtime, and stay guidance for medical travelers.',
               },
               fields: [
                 {
-                  name: 'image',
-                  type: 'upload',
-                  relationTo: 'media',
-                  required: true,
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'title',
+                      label: 'Title',
+                      type: 'text',
+                      required: true,
+                      admin: { width: '50%' },
+                    },
+                    {
+                      name: 'procedureCategory',
+                      label: 'Category',
+                      type: 'text',
+                      admin: {
+                        width: '50%',
+                        description: 'e.g. Body contouring, Facial',
+                      },
+                    },
+                  ],
                 },
                 {
-                  name: 'caption',
-                  type: 'text',
+                  name: 'description',
+                  label: 'Description',
+                  type: 'textarea',
+                  admin: {
+                    description: 'What the procedure involves and who it suits',
+                  },
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'averagePrice',
+                      label: 'Average price',
+                      type: 'number',
+                      min: 0,
+                      admin: {
+                        width: '33%',
+                        description: 'Typical package or procedure average',
+                      },
+                    },
+                    {
+                      name: 'priceCurrency',
+                      label: 'Currency',
+                      type: 'select',
+                      defaultValue: 'USD',
+                      options: [
+                        { label: 'USD', value: 'USD' },
+                        { label: 'EUR', value: 'EUR' },
+                        { label: 'GBP', value: 'GBP' },
+                        { label: 'EGP', value: 'EGP' },
+                      ],
+                      admin: { width: '33%' },
+                    },
+                    {
+                      name: 'priceNote',
+                      label: 'Price note',
+                      type: 'text',
+                      admin: {
+                        width: '34%',
+                        description: 'e.g. incl. consultation, from',
+                      },
+                    },
+                  ],
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'downtime',
+                      label: 'Downtime',
+                      type: 'text',
+                      admin: {
+                        width: '50%',
+                        description: 'Time off work / limited activity (e.g. 5–7 days)',
+                      },
+                    },
+                    {
+                      name: 'stayTime',
+                      label: 'Recommended stay',
+                      type: 'text',
+                      admin: {
+                        width: '50%',
+                        description: 'Suggested nights in destination (e.g. 7–10 nights)',
+                      },
+                    },
+                  ],
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'anesthesiaType',
+                      label: 'Anesthesia',
+                      type: 'select',
+                      options: [
+                        { label: 'Local', value: 'local' },
+                        { label: 'Sedation', value: 'sedation' },
+                        { label: 'General', value: 'general' },
+                        { label: 'Varies', value: 'varies' },
+                        { label: 'None / N/A', value: 'none' },
+                      ],
+                      admin: { width: '50%' },
+                    },
+                    {
+                      name: 'featuredProcedure',
+                      label: 'Highlight on profile',
+                      type: 'checkbox',
+                      defaultValue: false,
+                      admin: { width: '50%' },
+                    },
+                  ],
+                },
+                {
+                  name: 'recoveryNotes',
+                  label: 'Recovery notes',
+                  type: 'textarea',
+                  admin: {
+                    description: 'Follow-up visits, compression garments, activity limits, etc.',
+                  },
+                },
+                {
+                  name: 'occurrences',
+                  label: 'Occurrences',
+                  type: 'array',
+                  admin: {
+                    initCollapsed: true,
+                    description:
+                      'Separate cases or visits for this procedure—each with its own photos and notes (ensure consent for clinical images).',
+                  },
+                  fields: [
+                    {
+                      type: 'row',
+                      fields: [
+                        {
+                          name: 'title',
+                          label: 'Title',
+                          type: 'text',
+                          required: true,
+                          admin: {
+                            width: '50%',
+                            description: 'e.g. Case study — primary rhinoplasty',
+                          },
+                        },
+                        {
+                          name: 'occurrenceDate',
+                          label: 'Date',
+                          type: 'date',
+                          admin: {
+                            width: '50%',
+                            description: 'Procedure or visit date (optional)',
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      name: 'stage',
+                      label: 'Stage',
+                      type: 'select',
+                      options: [
+                        { label: 'Pre-operative', value: 'pre_op' },
+                        { label: 'Post-operative (early)', value: 'post_op_early' },
+                        { label: 'Post-operative (follow-up)', value: 'post_op_followup' },
+                        { label: 'Long-term result', value: 'long_term' },
+                        { label: 'Other', value: 'other' },
+                      ],
+                    },
+                    {
+                      name: 'summary',
+                      label: 'Summary',
+                      type: 'textarea',
+                      admin: {
+                        description: 'Goals, technique notes, or context for this occurrence',
+                      },
+                    },
+                    {
+                      name: 'outcomeNotes',
+                      label: 'Outcome notes',
+                      type: 'textarea',
+                      admin: {
+                        description: 'Anonymized, patient-safe notes suitable for the public site',
+                      },
+                    },
+                    {
+                      name: 'photos',
+                      label: 'Photos',
+                      type: 'array',
+                      admin: {
+                        initCollapsed: true,
+                      },
+                      fields: [
+                        {
+                          name: 'image',
+                          type: 'upload',
+                          relationTo: 'media',
+                          required: true,
+                        },
+                        {
+                          name: 'caption',
+                          type: 'text',
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  name: 'heroImage',
+                  label: 'Image',
+                  type: 'upload',
+                  relationTo: 'media',
+                  admin: {
+                    description: 'Optional photo for listings or detail cards',
+                  },
                 },
               ],
             },

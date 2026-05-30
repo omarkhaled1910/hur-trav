@@ -4,8 +4,10 @@ import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
-import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
+import { ar } from '@payloadcms/translations/languages/ar'
+import { en } from '@payloadcms/translations/languages/en'
+import { payloadLocalization } from '@/i18n/payload'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
@@ -21,6 +23,11 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  localization: payloadLocalization,
+  i18n: {
+    supportedLanguages: { en, ar },
+    fallbackLanguage: 'en',
+  },
   admin: {
     components: {
       beforeLogin: ['@/components/BeforeLogin'],
@@ -75,7 +82,6 @@ export default buildConfig({
     Pages,
     Posts,
     Media,
-    Categories,
     Users,
   ],
   cors: [getServerSideURL()].filter(Boolean),
