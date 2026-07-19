@@ -20,6 +20,10 @@ const nextConfig = {
         }
       }),
       {
+        hostname: '*.supabase.co',
+        protocol: 'https',
+      },
+      {
         hostname: 'i.ytimg.com',
         protocol: 'https',
       },

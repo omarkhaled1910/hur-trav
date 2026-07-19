@@ -2,7 +2,7 @@ import { getClientSideURL } from '@/utilities/getURL'
 
 /**
  * Resolves a Payload media URL for the frontend.
- * Files live in public/media and are served at /media/<filename>.
+ * New uploads use absolute Supabase public URLs; legacy relative paths are prefixed with the site URL.
  */
 export const getMediaUrl = (url: string | null | undefined, cacheTag?: string | null): string => {
   if (!url) return ''
