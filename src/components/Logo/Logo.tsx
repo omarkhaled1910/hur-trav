@@ -8,19 +8,23 @@ interface Props {
   className?: string
   loading?: 'lazy' | 'eager'
   priority?: 'auto' | 'high' | 'low'
+  invert?: boolean
 }
 
 export const Logo = (props: Props) => {
-  const { className } = props
+  const { className, invert = false } = props
   const { t } = useI18n()
 
   return (
-    <div className={clsx('flex items-center gap-2', className)}>
-      <div className="bg-teal-700 text-white font-bold text-sm px-2.5 py-1 rounded-md leading-none tracking-wide">
+    <div className={clsx('flex items-center gap-2.5', className)}>
+      <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--coral)] to-[var(--ink)] text-xs leading-none font-bold tracking-wide text-white shadow-sm">
         HT
       </div>
       <span
-        className="text-xl font-bold text-foreground dark:text-white"
+        className={clsx(
+          'text-xl font-extrabold tracking-tight',
+          invert ? 'text-white' : 'text-foreground',
+        )}
         style={{ fontFamily: 'Cairo, sans-serif' }}
       >
         {t('common.brandText')}

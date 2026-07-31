@@ -3,6 +3,8 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { notFound } from 'next/navigation'
 import React from 'react'
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 
 import type { Doctor, Media } from '@/payload-types'
 import RichText from '@/components/RichText'
@@ -10,8 +12,8 @@ import { CertificationBadge } from '@/components/medical/CertificationBadge'
 import { DoctorGallery } from '@/components/medical/DoctorGallery'
 import { ImageMedia } from '@/components/Media/ImageMedia'
 import { getServerI18n } from '@/i18n/server'
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { getSurgerySlug } from '@/utilities/getSurgerySlug'
 
 type Args = {
   params: Promise<{ slug: string }>
@@ -23,14 +25,6 @@ const anesthesiaLabelKey = {
   general: 'doctors.anesthesia.general',
   varies: 'doctors.anesthesia.varies',
   none: 'doctors.anesthesia.none',
-} as const
-
-const occurrenceStageKey = {
-  pre_op: 'doctors.occurrenceStage.pre_op',
-  post_op_early: 'doctors.occurrenceStage.post_op_early',
-  post_op_followup: 'doctors.occurrenceStage.post_op_followup',
-  long_term: 'doctors.occurrenceStage.long_term',
-  other: 'doctors.occurrenceStage.other',
 } as const
 
 async function getDoctor(slug: string): Promise<Doctor | null> {
@@ -176,7 +170,7 @@ export default async function DoctorDetailPage({ params }: Args) {
           {hasSurgeries && doctor.surgeries && (
             <section className="w-full">
               <h2 className="mb-6 text-xl font-semibold">{t('doctors.surgeries')}</h2>
-              <ul className="flex w-full flex-col gap-10 md:gap-12">
+              <ul className="grid w-full gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {[...doctor.surgeries]
                   .sort((a, b) => Number(!!b.featuredProcedure) - Number(!!a.featuredProcedure))
                   .map((surgery, index) => {
@@ -194,176 +188,100 @@ export default async function DoctorDetailPage({ params }: Args) {
                           }).format(surgery.averagePrice)
                         : null
                     const anesthesiaKey =
-                      surgery.anesthesiaType &&
-                      surgery.anesthesiaType in anesthesiaLabelKey
+                      surgery.anesthesiaType && surgery.anesthesiaType in anesthesiaLabelKey
                         ? anesthesiaLabelKey[
                             surgery.anesthesiaType as keyof typeof anesthesiaLabelKey
                           ]
                         : null
+                    const surgeryHref = `/doctors/${doctor.slug}/${getSurgerySlug(surgery)}`
+                    const caseCount = surgery.occurrences?.length ?? 0
+                    const photoCount =
+                      surgery.occurrences?.reduce(
+                        (sum, occ) =>
+                          sum +
+                          (occ.photos?.filter((p) => p.image && typeof p.image === 'object')
+                            .length ?? 0),
+                        0,
+                      ) ?? 0
 
                     return (
-                      <li
-                        key={surgery.id ?? index}
-                        className="flex w-full min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card/50 shadow-sm"
-                      >
-                        <div className="flex w-full flex-col lg:flex-row lg:items-stretch">
-                          {hero ? (
-                            <div className="relative aspect-video w-full shrink-0 border-b border-border bg-muted lg:aspect-auto lg:min-h-[min(360px,50vh)] lg:w-[min(44vw,520px)] lg:max-w-[520px] lg:border-b-0 lg:border-e">
-                              <ImageMedia fill imgClassName="object-cover" resource={hero} />
-                            </div>
-                          ) : null}
-                          <div className="flex min-w-0 flex-1 flex-col gap-3 p-5 md:p-6 lg:justify-center">
-                            <div className="flex flex-wrap items-start justify-between gap-2">
-                              <h3 className="text-xl font-semibold text-foreground md:text-2xl">
+                      <li key={surgery.id ?? index} className="min-w-0">
+                        <Link
+                          href={surgeryHref}
+                          className="group flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card/50 shadow-sm transition hover:border-teal-600/50 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+                        >
+                          <div className="relative aspect-[16/10] w-full shrink-0 bg-muted">
+                            {hero ? (
+                              <ImageMedia
+                                fill
+                                imgClassName="object-cover transition duration-500 group-hover:scale-[1.03]"
+                                resource={hero}
+                              />
+                            ) : (
+                              <div className="absolute inset-0 bg-gradient-to-br from-teal-900/20 via-muted to-muted" />
+                            )}
+                            {surgery.featuredProcedure ? (
+                              <span className="absolute start-3 top-3 rounded-full bg-teal-100 px-2 py-0.5 text-xs font-medium text-teal-900 dark:bg-teal-900/70 dark:text-teal-100">
+                                {t('doctors.featuredProcedure')}
+                              </span>
+                            ) : null}
+                          </div>
+
+                          <div className="flex min-w-0 flex-1 flex-col gap-3 p-5">
+                            <div className="space-y-1">
+                              <h3 className="text-lg font-semibold text-foreground transition group-hover:text-teal-800 dark:group-hover:text-teal-200">
                                 {surgery.title}
                               </h3>
-                              {surgery.featuredProcedure && (
-                                <span className="shrink-0 rounded-full bg-teal-100 px-2 py-0.5 text-xs font-medium text-teal-900 dark:bg-teal-900/40 dark:text-teal-100">
-                                  {t('doctors.featuredProcedure')}
-                                </span>
-                              )}
+                              {surgery.procedureCategory ? (
+                                <p className="text-xs font-medium uppercase tracking-wide text-teal-800 dark:text-teal-200">
+                                  {surgery.procedureCategory}
+                                </p>
+                              ) : null}
                             </div>
-                          {surgery.procedureCategory && (
-                            <p className="text-xs font-medium uppercase tracking-wide text-teal-800 dark:text-teal-200">
-                              {surgery.procedureCategory}
-                            </p>
-                          )}
-                          {surgery.description && (
-                            <p className="text-sm text-muted-foreground md:text-base">
-                              {surgery.description}
-                            </p>
-                          )}
-                          <dl className="mt-auto space-y-1.5 border-t border-border pt-4 text-sm lg:mt-2">
-                            {priceText && (
-                              <div className="flex justify-between gap-2">
-                                <dt className="text-muted-foreground">{t('doctors.avgPrice')}</dt>
-                                <dd className="text-end font-medium text-foreground">
-                                  {priceText}
-                                  {surgery.priceNote ? (
-                                    <span className="block text-xs font-normal text-muted-foreground">
-                                      {surgery.priceNote}
-                                    </span>
-                                  ) : null}
-                                </dd>
-                              </div>
-                            )}
-                            {surgery.downtime && (
-                              <div className="flex justify-between gap-2">
-                                <dt className="text-muted-foreground">{t('doctors.downtime')}</dt>
-                                <dd className="text-end">{surgery.downtime}</dd>
-                              </div>
-                            )}
-                            {surgery.stayTime && (
-                              <div className="flex justify-between gap-2">
-                                <dt className="text-muted-foreground">{t('doctors.stay')}</dt>
-                                <dd className="text-end">{surgery.stayTime}</dd>
-                              </div>
-                            )}
-                            {anesthesiaKey && (
-                              <div className="flex justify-between gap-2">
-                                <dt className="text-muted-foreground">{t('doctors.anesthesia')}</dt>
-                                <dd className="text-end">{t(anesthesiaKey)}</dd>
-                              </div>
-                            )}
-                            {surgery.recoveryNotes && (
-                              <div className="pt-1">
-                                <dt className="text-muted-foreground">{t('doctors.recovery')}</dt>
-                                <dd className="mt-0.5 text-muted-foreground">
-                                  {surgery.recoveryNotes}
-                                </dd>
-                              </div>
-                            )}
-                          </dl>
-                        </div>
-                        </div>
 
-                        {surgery.occurrences && surgery.occurrences.length > 0 && (
-                          <div className="w-full border-t border-border bg-muted/20 px-4 py-5 md:px-6 md:py-6">
-                            <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                              {t('doctors.surgeryOccurrences')}
-                            </p>
-                            <ul className="grid w-full gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                              {surgery.occurrences.map((occ, oi) => {
-                                const stageKey =
-                                  occ.stage && occ.stage in occurrenceStageKey
-                                    ? occurrenceStageKey[
-                                        occ.stage as keyof typeof occurrenceStageKey
-                                      ]
-                                    : null
-                                const photoItems =
-                                  occ.photos?.filter(
-                                    (p) => p.image && typeof p.image === 'object',
-                                  ) ?? []
+                            {surgery.description ? (
+                              <p className="line-clamp-3 text-sm text-muted-foreground">
+                                {surgery.description}
+                              </p>
+                            ) : null}
 
-                                return (
-                                  <li
-                                    key={occ.id ?? oi}
-                                    className="flex min-h-0 min-w-0 flex-col rounded-lg border border-border/80 bg-card/80 p-4 shadow-sm"
-                                  >
-                                    <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-                                      <h4 className="text-base font-semibold text-foreground">
-                                        {occ.title}
-                                      </h4>
-                                      {occ.occurrenceDate && (
-                                        <time
-                                          className="text-xs text-muted-foreground"
-                                          dateTime={occ.occurrenceDate}
-                                        >
-                                          {new Date(occ.occurrenceDate).toLocaleDateString(
-                                            locale === 'ar' ? 'ar-EG' : 'en-GB',
-                                            {
-                                              year: 'numeric',
-                                              month: 'short',
-                                              day: 'numeric',
-                                            },
-                                          )}
-                                        </time>
-                                      )}
-                                    </div>
-                                    {stageKey && (
-                                      <p className="mb-2 text-xs font-medium text-teal-800 dark:text-teal-200">
-                                        {t(stageKey)}
-                                      </p>
-                                    )}
-                                    {occ.summary && (
-                                      <p className="mb-2 text-sm leading-relaxed text-muted-foreground">
-                                        {occ.summary}
-                                      </p>
-                                    )}
-                                    {occ.outcomeNotes && (
-                                      <p className="mb-3 text-sm leading-relaxed text-muted-foreground">
-                                        {occ.outcomeNotes}
-                                      </p>
-                                    )}
-                                    {photoItems.length > 0 && (
-                                      <ul className="mt-auto grid grid-cols-2 gap-2 md:grid-cols-3">
-                                        {photoItems.map((ph, pi) => (
-                                          <li
-                                            key={ph.id ?? pi}
-                                            className="overflow-hidden rounded-md border border-border bg-muted"
-                                          >
-                                            <div className="relative aspect-square">
-                                              <ImageMedia
-                                                fill
-                                                imgClassName="object-cover"
-                                                resource={ph.image as Media}
-                                              />
-                                            </div>
-                                            {ph.caption && (
-                                              <p className="px-1.5 py-1 text-[10px] text-muted-foreground">
-                                                {ph.caption}
-                                              </p>
-                                            )}
-                                          </li>
-                                        ))}
-                                      </ul>
-                                    )}
-                                  </li>
-                                )
-                              })}
-                            </ul>
+                            <dl className="mt-auto space-y-1.5 border-t border-border pt-4 text-sm">
+                              {priceText ? (
+                                <div className="flex justify-between gap-2">
+                                  <dt className="text-muted-foreground">{t('doctors.avgPrice')}</dt>
+                                  <dd className="text-end font-medium text-foreground">
+                                    {priceText}
+                                  </dd>
+                                </div>
+                              ) : null}
+                              {surgery.downtime ? (
+                                <div className="flex justify-between gap-2">
+                                  <dt className="text-muted-foreground">{t('doctors.downtime')}</dt>
+                                  <dd className="text-end">{surgery.downtime}</dd>
+                                </div>
+                              ) : null}
+                              {anesthesiaKey ? (
+                                <div className="flex justify-between gap-2">
+                                  <dt className="text-muted-foreground">{t('doctors.anesthesia')}</dt>
+                                  <dd className="text-end">{t(anesthesiaKey)}</dd>
+                                </div>
+                              ) : null}
+                            </dl>
+
+                            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-sm">
+                              <span className="text-muted-foreground">
+                                {caseCount > 0
+                                  ? t('doctors.caseCount', { count: caseCount })
+                                  : t('doctors.viewProcedure')}
+                                {photoCount > 0 ? ` · ${t('doctors.photoCount', { count: photoCount })}` : ''}
+                              </span>
+                              <span className="inline-flex items-center gap-1 font-medium text-teal-800 dark:text-teal-200">
+                                {t('doctors.viewCases')}
+                                <ArrowRight className="size-4 transition group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" />
+                              </span>
+                            </div>
                           </div>
-                        )}
+                        </Link>
                       </li>
                     )
                   })}

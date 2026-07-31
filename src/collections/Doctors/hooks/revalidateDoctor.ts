@@ -12,6 +12,7 @@ export const revalidateDoctor: CollectionAfterChangeHook<Doctor> = ({
 
   if (doc.published) {
     revalidatePath(`/doctors/${doc.slug}`)
+    revalidatePath(`/doctors/${doc.slug}`, 'layout')
     revalidatePath('/doctors')
     revalidatePath('/')
     revalidateTag('doctors')
@@ -19,6 +20,7 @@ export const revalidateDoctor: CollectionAfterChangeHook<Doctor> = ({
 
   if (previousDoc?.published && !doc.published) {
     revalidatePath(`/doctors/${previousDoc.slug}`)
+    revalidatePath(`/doctors/${previousDoc.slug}`, 'layout')
     revalidatePath('/doctors')
     revalidatePath('/')
     revalidateTag('doctors')

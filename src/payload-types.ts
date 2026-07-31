@@ -257,6 +257,10 @@ export interface Doctor {
          */
         procedureCategory?: string | null;
         /**
+         * URL segment under /doctors/[doctor-slug]/[this-slug]. Auto-filled from title when empty.
+         */
+        slug?: string | null;
+        /**
          * What the procedure involves and who it suits
          */
         description?: string | null;
@@ -1318,6 +1322,7 @@ export interface DoctorsSelect<T extends boolean = true> {
     | {
         title?: T;
         procedureCategory?: T;
+        slug?: T;
         description?: T;
         averagePrice?: T;
         priceCurrency?: T;

@@ -4,8 +4,13 @@ import React from 'react'
 
 import { useI18n } from '@/i18n/client'
 import type { Locale } from '@/i18n/translations'
+import { cn } from '@/utilities/ui'
 
-export const LanguageSwitcher = () => {
+type Props = {
+  invert?: boolean
+}
+
+export const LanguageSwitcher: React.FC<Props> = ({ invert = false }) => {
   const { locale, setLocale, t } = useI18n()
 
   const handleChange = (nextLocale: Locale) => {
@@ -14,33 +19,38 @@ export const LanguageSwitcher = () => {
     }
   }
 
+  const baseButton =
+    'rounded-full px-3 py-1.5 text-xs font-semibold transition-colors leading-none'
+  const activeButton = 'bg-[var(--coral)] text-white'
+  const inactiveButton = invert
+    ? 'text-white/60 hover:text-white'
+    : 'text-muted-foreground hover:text-foreground'
+
   return (
-    <div className="flex items-center gap-2">
-      {/* <span className="text-xs text-muted-foreground hidden sm:inline">{t('language.switchLabel')}</span> */}
-      <div className="inline-flex items-center rounded-md border border-border overflow-hidden">
-        <button
-          type="button"
-          onClick={() => handleChange('ar')}
-          className={`px-2.5 py-1.5 text-xs font-medium transition-colors ${
-            locale === 'ar'
-              ? 'bg-red-600 text-white'
-              : 'bg-background text-foreground hover:bg-muted'
-          }`}
-        >
-          {t('language.arabic')}
-        </button>
-        <button
-          type="button"
-          onClick={() => handleChange('en')}
-          className={`px-2.5 py-1.5 text-xs font-medium transition-colors ${
-            locale === 'en'
-              ? 'bg-red-600 text-white'
-              : 'bg-background text-foreground hover:bg-muted'
-          }`}
-        >
-          {t('language.english')}
-        </button>
-      </div>
+    <div
+      className={cn(
+        'inline-flex items-center gap-0.5 rounded-full border p-0.5',
+        invert ? 'border-white/15' : 'border-border',
+      )}
+    >
+      <button
+        type="button"
+        onClick={() => handleChange('ar')}
+        aria-label={t('language.arabic')}
+        aria-pressed={locale === 'ar'}
+        className={cn(baseButton, locale === 'ar' ? activeButton : inactiveButton)}
+      >
+        ع
+      </button>
+      <button
+        type="button"
+        onClick={() => handleChange('en')}
+        aria-label={t('language.english')}
+        aria-pressed={locale === 'en'}
+        className={cn(baseButton, locale === 'en' ? activeButton : inactiveButton)}
+      >
+        EN
+      </button>
     </div>
   )
 }

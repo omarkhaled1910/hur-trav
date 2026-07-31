@@ -4,9 +4,13 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
 
+import type { Media } from '@/payload-types'
+import { siteConfig } from '@/config/site'
 import { MedicalHero } from '@/components/medical/MedicalHero'
 import { PackageHighlight } from '@/components/medical/PackageHighlight'
 import { DoctorCard } from '@/components/medical/DoctorCard'
+import { Reveal } from '@/components/medical/Reveal'
+import { WaveDivider } from '@/components/medical/WaveDivider'
 import { WhereYouCanBe } from '@/components/medical/WhereYouCanBe'
 import { getServerI18n } from '@/i18n/server'
 import { getDirection } from '@/i18n/translations'
@@ -63,6 +67,16 @@ export default async function HomePage() {
   const { locale, t } = await getServerI18n()
   const [doctors, hotels] = await Promise.all([getHomepageDoctors(), getHomepageHotels()])
   const hotelSlides = flattenHotelGallerySlides(hotels)
+  const isRtl = getDirection(locale) === 'rtl'
+
+  const heroImage = hotels
+    .flatMap((hotel) => hotel.images ?? [])
+    .find((image): image is Media => Boolean(image) && typeof image === 'object')
+
+  const doctorsLabel =
+    doctors.length > 0
+      ? t('home.statDoctorsLabel', { count: doctors.length })
+      : t('home.statDoctorsFallback')
 
   const packageSteps = [
     {
@@ -90,57 +104,99 @@ export default async function HomePage() {
         subtitle={t('home.heroSubtitle')}
         ctaLabel={t('home.ctaConsultation')}
         secondaryCtaLabel={t('nav.doctors')}
+        locationLabel={t('common.location')}
+        daysLabel={t('home.statDaysLabel', { days: siteConfig.packageDays })}
+        certifiedLabel={t('doctors.euCertified')}
+        doctorsLabel={doctorsLabel}
+        backgroundImage={heroImage}
       />
 
-      <PackageHighlight title={t('package.title')} items={packageSteps} />
+      <PackageHighlight
+        eyebrow={t('package.eyebrow')}
+        title={t('package.title')}
+        description={t('package.subtitle', { days: siteConfig.packageDays })}
+        items={packageSteps}
+      />
 
       <WhereYouCanBe
+        eyebrow={t('home.hotelsEyebrow')}
         title={t('home.whereYouCanBe')}
         description={t('home.whereYouCanBeDescription')}
         slides={hotelSlides}
         imagesPerPage={6}
         previousLabel={t('pagination.previous')}
         nextLabel={t('pagination.next')}
+        pageLabel={t('common.page')}
         emptyLabel={t('home.hotelsEmpty')}
-        isRtl={getDirection(locale) === 'rtl'}
+        isRtl={isRtl}
       />
 
-      <section className="container py-14 md:py-16">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground md:text-3xl">{t('home.featuredDoctors')}</h2>
-            <p className="mt-2 max-w-xl text-muted-foreground">{t('home.featuredDoctorsDescription')}</p>
+      <section className="relative py-20 md:py-28">
+        <Reveal className="mb-10 flex flex-wrap items-end justify-between gap-6">
+          <div className="max-w-xl">
+            <p className="text-xs font-semibold tracking-[0.25em] text-[var(--coral)] uppercase">
+              {t('home.doctorsEyebrow')}
+            </p>
+            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
+              {t('home.featuredDoctors')}
+            </h2>
+            <p className="mt-4 text-muted-foreground md:text-lg">
+              {t('home.featuredDoctorsDescription')}
+            </p>
           </div>
-          <Button asChild variant="outline" className="border-teal-700/30">
+          <Button asChild variant="outline" className="rounded-full border-teal-700/30">
             <Link href="/doctors">{t('home.viewAllDoctors')}</Link>
           </Button>
-        </div>
+        </Reveal>
 
         {doctors.length > 0 ? (
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {doctors.map((doctor) => (
-              <li key={doctor.id}>
-                <DoctorCard doctor={doctor} />
-              </li>
+            {doctors.map((doctor, index) => (
+              <Reveal key={doctor.id} delay={index * 90} className="h-full">
+                <li className="h-full">
+                  <DoctorCard doctor={doctor} className="h-full" />
+                </li>
+              </Reveal>
             ))}
           </ul>
         ) : (
-          <p className="rounded-lg border border-dashed border-border p-8 text-center text-muted-foreground">
-            {t('doctors.empty')}
-          </p>
+          <Reveal>
+            <p className="rounded-2xl border border-dashed border-border bg-background/60 p-10 text-center text-muted-foreground">
+              {t('doctors.empty')}
+            </p>
+          </Reveal>
         )}
       </section>
 
-      <section className="bg-teal-900 py-14 text-white md:py-16">
-        <div className="container flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+      <section className="relative isolate overflow-hidden bg-[var(--ink-deep)] py-20 text-white md:py-28">
+        <div
+          aria-hidden
+          className="bg-grain absolute inset-0 opacity-[0.06] mix-blend-overlay"
+        />
+        <div
+          aria-hidden
+          className="absolute end-[-6rem] top-1/2 size-[20rem] -translate-y-1/2 rounded-full bg-[var(--coral)]/25 blur-3xl"
+        />
+        <WaveDivider className="absolute inset-x-0 top-0 z-0 -translate-y-full text-[var(--ink-deep)]" />
+
+        <Reveal className="container relative flex flex-col items-start gap-8 md:flex-row md:items-center md:justify-between">
           <div className="max-w-xl">
-            <h2 className="text-2xl font-bold md:text-3xl">{t('home.ctaBandTitle')}</h2>
-            <p className="mt-2 text-teal-100">{t('home.ctaBandDescription')}</p>
+            <p className="text-xs font-semibold tracking-[0.25em] text-[var(--gold)] uppercase">
+              {t('home.ctaEyebrow')}
+            </p>
+            <h2 className="mt-3 text-3xl font-extrabold tracking-tight md:text-5xl">
+              {t('home.ctaBandTitle')}
+            </h2>
+            <p className="mt-4 text-teal-50/75 md:text-lg">{t('home.ctaBandDescription')}</p>
           </div>
-          <Button asChild size="lg" className="bg-white text-teal-900 hover:bg-teal-50">
+          <Button
+            asChild
+            size="lg"
+            className="h-13 shrink-0 rounded-full bg-[var(--coral)] px-8 text-base font-semibold text-white shadow-[0_20px_45px_-15px_var(--coral)] hover:bg-[var(--coral-strong)]"
+          >
             <Link href="/consultation">{t('home.ctaConsultation')}</Link>
           </Button>
-        </div>
+        </Reveal>
       </section>
     </main>
   )

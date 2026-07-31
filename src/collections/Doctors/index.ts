@@ -342,6 +342,43 @@ export const Doctors: CollectionConfig = {
                   ],
                 },
                 {
+                  name: 'slug',
+                  label: 'Slug',
+                  type: 'text',
+                  index: true,
+                  admin: {
+                    description:
+                      'URL segment under /doctors/[doctor-slug]/[this-slug]. Auto-filled from title when empty.',
+                  },
+                  hooks: {
+                    beforeValidate: [
+                      ({ value, siblingData }) => {
+                        if (typeof value === 'string' && value.trim()) {
+                          return value
+                            .trim()
+                            .toLowerCase()
+                            .replace(/\s+/g, '-')
+                            .replace(/[^\p{L}\p{N}-]+/gu, '-')
+                            .replace(/-+/g, '-')
+                            .replace(/^-|-$/g, '')
+                        }
+                        const title =
+                          siblingData && typeof siblingData === 'object' && 'title' in siblingData
+                            ? String((siblingData as { title?: string }).title ?? '')
+                            : ''
+                        if (!title.trim()) return value
+                        return title
+                          .trim()
+                          .toLowerCase()
+                          .replace(/\s+/g, '-')
+                          .replace(/[^\p{L}\p{N}-]+/gu, '-')
+                          .replace(/-+/g, '-')
+                          .replace(/^-|-$/g, '')
+                      },
+                    ],
+                  },
+                },
+                {
                   name: 'description',
                   label: 'Description',
                   type: 'textarea',
