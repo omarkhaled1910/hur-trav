@@ -24,6 +24,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={locale} dir={dir} suppressHydrationWarning>
       <head>
         <InitTheme />
+        hey
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
